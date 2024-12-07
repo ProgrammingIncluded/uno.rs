@@ -447,15 +447,18 @@ fn main() {
             );
         }
         println!();
-        println!(
-            "{}",
-            Vec::from_iter(moves.iter().enumerate().map(|(idx, i)| format!(
-                "{}: {}",
-                idx,
-                i.to_string()
-            )))
-            .join(", ")
-        );
+        let mut result = "".to_string();
+        for (idx, m) in moves.iter().enumerate() {
+            // For display, we resolve hand values to make it easier to interact with.
+            if m.variant == Variant::Play {
+                let mut card = game.hands[m.player_idx][m.hand_idx].clone();
+                card.color = m.as_color.clone();
+                result.push_str(&format!("{}: {} ", idx, card));
+            } else {
+                result.push_str(&format!("{}: {} ", idx, m));
+            }
+        }
+        println!("{}", result);
         println!();
 
         let select_idx = if args.play_as == game.turn as i32 {

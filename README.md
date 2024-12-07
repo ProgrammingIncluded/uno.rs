@@ -8,19 +8,23 @@ If running from the repo, you can use the default cargo manager:
 
 ```
 cargo run --release -- --help
+Usage: uno.exe [OPTIONS]
+
 Options:
   -p, --players <PLAYERS>      Number of players. [default: 2]
   -n, --num-decks <NUM_DECKS>  Number of uno decks to play with, there are 108 cards per game. [default: 1]
   -x, --hand-size <HAND_SIZE>  Hand size during the game. [default: 7]
   -s, --seed <SEED>            Seed to play the game. [default: 0]
+      --play-as <PLAY_AS>      Select a player to play as otherwise the game is simulated. [default: -1]
   -h, --help                   Print help
   -V, --version                Print version
 ```
 
-Default behavior starts an interactive game and can be tweaked:
+Default behavior simulates a game with random input. Use `--play-as` to play as a player.
 
 ```
-cargo run --release -- --hand-size 2
+cargo run --release -- --hand-size 2 --play-as 0
+
 --- Playing as Hand #0 ---
 Field Top: V1Y
 Cards in Deck: 103
@@ -29,7 +33,7 @@ Cards in Field: 1
 Hand #0: *-*, V2R
 Hand #1: V5Y, V2R
 
-0: H0R, 1: H0Y, 2: H0B, 3: H0G
+0: *-R 1: *-Y 2: *-B 3: *-G
 
 Input a valid move from 0 - 3
 0
@@ -42,10 +46,9 @@ Cards in Field: 2
 Hand #0: V2R
 Hand #1: V5Y, V2R
 
-0: H1R
+0: V2R
 
-Input a valid move from 0 - 0
-0
+Bot has picked move: 0
 
 --- Playing as Hand #0 ---
 Field Top: V2R
@@ -55,7 +58,7 @@ Cards in Field: 3
 Hand #0: V2R
 Hand #1: V5Y
 
-0: H0R
+0: V2R
 
 Input a valid move from 0 - 0
 0
@@ -74,8 +77,7 @@ A general notation is as follows:
 Each card can be encoded using this approach for example:
 
 * Value Card: `V<Value><Color>`
-* Referring to Hand: `H<Hand_idx><Color>`
-* Draw Card: `D<Number_Cards><Color>`
+* Draw Card: `D<Number_Cards><Color Chosen>`
 
 Generally dashes denote non-value or irrelevant value.
 Here are some examples of the IR:
@@ -89,51 +91,43 @@ Here are some examples of the IR:
 
 The script allows for tweaking of common configuration parameters.
 Upon specifying `--players` for example, number of decks being used will scale.
-Here is an example of a 32 player game:
+Here is an example of a 24 player game:
 
 ```
-$> cargo run -- --players 32
+$> cargo run -- --players 24
 Number of players exceed number of cards available if each player has 7 cards per hand.
-Auto scaling num of decks to 3 for 32 players.
+Auto scaling num of decks to 2 for 24 players.
 --- Playing as Hand #0 ---
-Field Top: V4G
-Cards in Deck: 207
+Field Top: V2Y
+Cards in Deck: 47
 Cards in Field: 1
 
-Hand #0: *-*, V5B, *-*, D4*, V7R, V7B, V9Y
-Hand #1: V1B, V3R, V8R, V2Y, V9B, R-Y, D2Y
-Hand #2: V6Y, D4*, C-B, V1B, V1B, V8B, C-B
-Hand #3: V9R, V8B, V6B, C-Y, V0B, V4Y, C-Y
-Hand #4: R-G, V3Y, V2Y, C-Y, D4*, V7Y, V6Y
-Hand #5: R-Y, C-G, V8Y, C-G, V1B, V4B, V6R
-Hand #6: V2B, V7B, V1R, V6R, V2R, C-G, V6G
-Hand #7: D4*, V7G, V5Y, V1B, V2R, V5Y, V6R
-Hand #8: R-R, V1G, C-R, R-R, V1Y, V4G, C-G
-Hand #9: V7B, V9R, V5G, V5B, V8B, V9R, V3B
-Hand #10: V8G, D2G, V7R, V7B, V2R, V2G, V9G
-Hand #11: *-*, V7R, V5G, C-B, V1R, V7B, V8B
-Hand #12: V2B, V8R, V9R, V8B, V1G, V6R, R-B
-Hand #13: V8R, V2R, V8B, V7Y, V2G, C-R, R-Y
-Hand #14: V7Y, V2Y, V8G, D2B, D2G, C-Y, D2Y
-Hand #15: V1Y, V7Y, V9B, V7R, V9R, V0B, V2Y
-Hand #16: V4B, V1Y, D2B, V3B, D2Y, V9G, V6B
-Hand #17: V5R, V8Y, V2B, C-Y, V4Y, V8R, V3Y
-Hand #18: V8B, *-*, D4*, V6R, C-G, V9Y, V1B
-Hand #19: V4B, *-*, V0B, D2B, V3R, *-*, V0Y
-Hand #20: R-R, V4G, C-R, V5B, V6G, R-G, V7R
-Hand #21: D2Y, V5Y, V5Y, V4B, V3G, V2G, V3R
-Hand #22: V1R, V4R, V4G, *-*, V7R, D2Y, D2R
-Hand #23: R-G, V6G, R-R, V7R, D2R, V3G, *-*
-Hand #24: V0Y, C-G, *-*, V9G, V1R, C-B, V5R
-Hand #25: V9Y, V5Y, V5B, V9Y, V4R, V1R, V7G
-Hand #26: V4G, V8R, R-G, C-B, V3B, V2R, V1Y
-Hand #27: C-Y, V4G, D2R, *-*, V5Y, D2B, R-B
-Hand #28: V5G, V2Y, V6B, V1R, V3B, V9Y, V1R
-Hand #29: V1R, D4*, V7G, V9Y, V6B, V2Y, V3B
-Hand #30: V0Y, V0R, D4*, V9Y, V3G, R-B, V4R
-Hand #31: V2G, V0B, D2R, V6R, R-G, D2G, V3Y
+Hand #0: D4*, V3R, V7R, D4*, R-B, V4R, V4Y
+Hand #1: V1G, V4B, V1B, D4*, R-G, V7R, V7G
+Hand #2: D2R, V6R, S-B, V5Y, *-*, V7R, D2R
+Hand #3: S-B, V3B, V5G, R-B, V8R, R-B, V0B
+Hand #4: V5G, R-R, S-G, V0G, V4B, *-*, V8Y
+Hand #5: S-B, V3R, V6Y, V3B, D2G, V9R, V1G
+Hand #6: V8R, V5R, V6Y, V1Y, V8B, V3Y, R-R
+Hand #7: V7R, V0R, D2R, V1Y, V1R, V7B, V6G
+Hand #8: V3B, V8Y, V7B, R-G, V4G, V1B, V2B
+Hand #9: V7G, *-*, V7Y, R-G, D2G, D4*, V5R
+Hand #10: *-*, R-Y, V6B, V6B, V1R, V4G, D4*
+Hand #11: V2R, V8Y, V3G, V7G, R-Y, D2Y, V8B
+Hand #12: R-B, V6R, V1Y, S-R, V2G, V3R, D2G
+Hand #13: D2Y, V7G, D2Y, V5Y, V6R, V9Y, V8Y
+Hand #14: V2G, *-*, V5B, V9G, V0R, *-*, V4G
+Hand #15: V2Y, S-R, R-Y, S-R, D2B, V0B, V1G
+Hand #16: V4R, V6G, D4*, V9B, V6G, S-Y, D4*
+Hand #17: V1B, V7Y, V5Y, V3R, S-Y, V4G, V2Y
+Hand #18: V6Y, V0G, V3G, V8R, V2B, V3G, V9B
+Hand #19: R-G, V9Y, V6B, V2G, V2R, V4R, *-*
+Hand #20: R-R, V5G, S-Y, S-G, V3Y, R-R, S-Y
+Hand #21: D2R, V4Y, V6B, V9Y, V0Y, V6Y, V2R
+Hand #22: V8R, V5Y, V2B, S-R, V9G, V9R, V5B
+Hand #23: V8B, V9R, V4R, D4*, V1R, V5B, D2B
 
-0: H0R, 1: H0Y, 2: H0B, 3: H0G, 4: H2R, 5: H2Y, 6: H2B, 7: H2G, 8: D4->R, 9: D4->Y, 10: D4->B, 11: D4->G
+0: D4->R 1: D4->Y 2: D4->B 3: D4->G 4: D4->R 5: D4->Y 6: D4->B 7: D4->G 8: V4Y
 ```
 
 ## Future Goals
