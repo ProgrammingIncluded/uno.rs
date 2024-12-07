@@ -69,21 +69,21 @@ To keep the game succinct in terminal, an IR is used for display cards.
 
 A general notation is as follows:
 
-* <Card Type><Card Value><Card Color>
+* `<Card Type><Card Value><Card Color>`
 
 Each card can be encoded using this approach for example:
 
-* Value Card: V<Value><Color>
-* Referring to Hand: H<Hand_idx><Color>
-* Draw Card: D<Number_Cards><Color>
+* Value Card: `V<Value><Color>`
+* Referring to Hand: `H<Hand_idx><Color>`
+* Draw Card: `D<Number_Cards><Color>`
 
 Generally dashes denote non-value or irrelevant value.
 Here are some examples of the IR:
 
-* Wild Card: *-*
-* Wild Card Played with Color: *-R
-* Draw Four without Color Selected: D4* 
-* Draw Four with Color Selected: D4R
+* Wild Card: `*-`
+* Wild Card Played with Color: `*-R`
+* Draw Four without Color Selected: `D4*`
+* Draw Four with Color Selected: `D4R`
 
 ## Custom Uno Games
 
