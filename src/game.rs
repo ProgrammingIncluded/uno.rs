@@ -170,14 +170,15 @@ impl Game {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+// Order prioritized by how cards are played.
+#[derive(Clone, Debug, PartialEq, PartialOrd, Ord, Eq)]
 pub enum Variant {
-    Play,
-    Skip,
     DrawDeck,
-    Draw4,
-    Draw2,
+    Play,
     Reverse,
+    Skip,
+    Draw2,
+    Draw4,
 }
 
 #[derive(Clone, Debug, PartialEq)]

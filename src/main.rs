@@ -63,7 +63,7 @@ fn main() {
     }
 
     let mut game = Game::init(args.players, num_decks, args.hand_size, args.seed);
-    let mut bot = Bot { strategy: BotType:: RANDOM };
+    let mut bot = Bot { strategy: BotType:: CONSERVATIVE };
     loop {
         let moves = game.generate();
         let empty = game.hands.iter().enumerate().find(|&(_, m)| m.len() == 0);
